@@ -29,8 +29,8 @@ public class BaseEntity {
 	private Long id;
 	@CreationTimestamp
 	@Column(name="created_time")
-	private LocalDateTime creationDate;
+	private LocalDateTime createdTime;
 	@UpdateTimestamp
 	@Column(name="updated_time")
-	private LocalDateTime updatedOn;
+	private LocalDateTime updatedTime;
 }
