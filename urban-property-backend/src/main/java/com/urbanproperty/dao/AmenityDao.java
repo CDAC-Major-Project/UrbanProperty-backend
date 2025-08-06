@@ -2,9 +2,9 @@ package com.urbanproperty.dao;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import com.urbanproperty.entities.PropertyType;
+import com.urbanproperty.entities.Amenity;
 
 @Repository
-public interface PropertyTypeDao extends JpaRepository<PropertyType, Long> {
-    
+public interface AmenityDao extends JpaRepository<Amenity, Long> {
+	
 }
