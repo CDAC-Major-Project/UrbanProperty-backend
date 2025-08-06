@@ -18,18 +18,24 @@ import lombok.ToString;
  * To declare a common base class - w/o any associated table
  * All other entities will extend n inherit fields
  */
+
 @MappedSuperclass
 @Getter
 @Setter
 @ToString
+
 public class BaseEntity {
+
 	// add common fields
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+
 	@CreationTimestamp
 	@Column(name="created_time")
 	private LocalDateTime createdTime;
+
 	@UpdateTimestamp
 	@Column(name="updated_time")
 	private LocalDateTime updatedTime;

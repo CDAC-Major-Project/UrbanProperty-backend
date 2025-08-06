@@ -22,6 +22,13 @@ public class GlobalExceptionHandler {
 		System.out.println("in handle res not found exc");
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new  ApiResponse(e.getMessage()));
 	}
+	
+	// equivalent to catch-all
+	@ExceptionHandler(Exception.class)
+	public ResponseEntity<?> handleException(Exception e) {
+		System.out.println("in catch all exc " + e);
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage()));
+	}
 
 	
 	
