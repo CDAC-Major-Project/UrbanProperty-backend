@@ -4,12 +4,12 @@ import com.urbanproperty.custom_exceptions.ResourceNotFoundException;
 import com.urbanproperty.dao.AmenityDao;
 import com.urbanproperty.dto.AmenityDto;
 import com.urbanproperty.entities.Amenity;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.AllArgsConstructor;
 import java.util.List;
 import java.util.stream.Collectors;
-
 
 @Service
 @Transactional
@@ -17,39 +17,45 @@ import java.util.stream.Collectors;
 public class AmenityServiceImpl implements AmenityService {
 
     private final AmenityDao amenityDao;
+    private final ModelMapper modelMapper; 
 
     @Override
     public AmenityDto createAmenity(AmenityDto dto) {
-        Amenity amenity = mapToEntity(dto);
+        // Use ModelMapper to convert DTO to entity
+        Amenity amenity = modelMapper.map(dto, Amenity.class);
         Amenity savedAmenity = amenityDao.save(amenity);
-        return mapToDto(savedAmenity);
+        // Use ModelMapper to convert saved entity back to DTO
+        return modelMapper.map(savedAmenity, AmenityDto.class);
     }
 
     @Override
-   
     public AmenityDto getAmenityById(Long id) {
         Amenity amenity = amenityDao.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Amenity not found with id: " + id));
-        return mapToDto(amenity);
+        // Use ModelMapper to convert entity to DTO
+        return modelMapper.map(amenity, AmenityDto.class);
     }
 
     @Override
     public List<AmenityDto> getAllAmenity() {
         return amenityDao.findAll().stream()
-                .map(this::mapToDto)
+                // Use ModelMapper within the stream to convert each entity
+                .map(amenity -> modelMapper.map(amenity, AmenityDto.class))
                 .collect(Collectors.toList());
     }
-    
+
     @Override
     public AmenityDto updateAmenity(Long id, AmenityDto dto) {
         Amenity existingAmenity = amenityDao.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Amenity not found with id: " + id));
 
-        existingAmenity.setName(dto.getName());
-        existingAmenity.setIconUrl(dto.getIconUrl());
+        // Use ModelMapper to update the existing entity's fields from the DTO
+        // This is a powerful feature for updating objects without manually setting each
+        // field.
+        modelMapper.map(dto, existingAmenity);
 
         Amenity updatedAmenity = amenityDao.save(existingAmenity);
-        return mapToDto(updatedAmenity);
+        return modelMapper.map(updatedAmenity, AmenityDto.class);
     }
 
     @Override
@@ -60,18 +66,4 @@ public class AmenityServiceImpl implements AmenityService {
         amenityDao.deleteById(id);
     }
 
-    private Amenity mapToEntity(AmenityDto dto) {
-        Amenity amenity = new Amenity();
-        amenity.setName(dto.getName());
-        amenity.setIconUrl(dto.getIconUrl());
-        return amenity;
-    }
-
-    private AmenityDto mapToDto(Amenity amenity) {
-        return new AmenityDto(
-            amenity.getId(),
-            amenity.getName(),
-            amenity.getIconUrl()
-        );
-    }
 }
