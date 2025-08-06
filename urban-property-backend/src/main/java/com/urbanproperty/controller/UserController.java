@@ -11,13 +11,13 @@ import com.urbanproperty.service.UserService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/v1/users")
 public class UserController {
 
 	@Autowired
 	private UserService userService;
 
-	@PostMapping("/signup")
+	@PostMapping
 	public ResponseEntity<?> register(@RequestBody @Valid UserRegistrationRequest dto) {
 		System.out.println("User Registration: " + dto);
 		return ResponseEntity.status(HttpStatus.CREATED).body(userService.registerUser(dto));
@@ -28,7 +28,7 @@ public class UserController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(userService.getUserById(id));
 	}
 	
-	@GetMapping("/admin/users")
+	@GetMapping
 	public ResponseEntity<?> get_all_users(){
 		return ResponseEntity.status(HttpStatus.CREATED).body(userService.getAllUsers());
 	}
