@@ -1,35 +1,5 @@
 package com.urbanproperty.exception_handler;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
-import com.urbanproperty.custom_exceptions.ApiException;
-import com.urbanproperty.custom_exceptions.ResourceNotFoundException;
-import com.urbanproperty.dto.ApiResponse;
-
-@RestControllerAdvice
-public class GlobalExceptionHandler {
-	
-	@ExceptionHandler(ApiException.class)
-	public ResponseEntity<?> handleApiException(ApiException e) {
-		System.out.println("in handle api exc");
-		return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponse(e.getMessage()));
-	}
-
-	@ExceptionHandler(ResourceNotFoundException.class)
-	public ResponseEntity<?> handleResourceNotFoundException(ResourceNotFoundException e) {
-		System.out.println("in handle res not found exc");
-		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new  ApiResponse(e.getMessage()));
-	}
-	
-	// equivalent to catch-all
-	@ExceptionHandler(Exception.class)
-	public ResponseEntity<?> handleException(Exception e) {
-		System.out.println("in catch all exc " + e);
-		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage()));
-	}
-
 import com.urbanproperty.custom_exceptions.ApiException;
 import com.urbanproperty.custom_exceptions.ResourceNotFoundException;
 import com.urbanproperty.dto.ApiResponse;
@@ -63,7 +33,8 @@ public class GlobalExceptionHandler {
 
     /**
      * Handles our custom ApiException.
-     * This can be used for general business logic errors (e.g., email already exists).
+     * This can be used for general business logic errors (e.g., email already
+     * exists).
      */
     @ExceptionHandler(ApiException.class)
     public ResponseEntity<ApiResponse> handleApiException(ApiException ex) {
@@ -71,7 +42,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
@@ -85,7 +55,8 @@ public class GlobalExceptionHandler {
 
     /**
      * A generic handler for any other unhandled exceptions.
-     * This acts as a safety net to prevent stack traces from being sent to the client.
+     * This acts as a safety net to prevent stack traces from being sent to the
+     * client.
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse> handleGenericException(Exception ex) {
