@@ -1,6 +1,9 @@
 package com.urbanproperty.service;
 
+import java.util.List;
+
 import com.urbanproperty.dto.AllUsersResponse;
+import com.urbanproperty.dto.PropertyResponseDto;
 import com.urbanproperty.dto.UserRegistrationRequest;
 import com.urbanproperty.dto.UserResponse;
 
@@ -13,5 +16,9 @@ public interface UserService {
      * Retrieves all BUYER and SELLER users, separated by role.
      */
     AllUsersResponse getAllUsers();
-
+    
+    //for properties
+    void addFavoriteProperty(Long userId, Long propertyId);
+    void removeFavoriteProperty(Long userId, Long propertyId);
+    List<PropertyResponseDto> getFavoriteProperties(Long userId);
 }

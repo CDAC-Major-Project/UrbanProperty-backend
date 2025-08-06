@@ -1,9 +1,14 @@
 package com.urbanproperty.entities;
 
+import java.util.HashSet;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -39,7 +44,25 @@ public class UserEntity extends BaseEntity{
 
 	    @Column(name = "extension", columnDefinition = "json")
 	    private String extension; // If you want to handle JSON as text
-
+	    
+		 @ManyToMany
+		 @JoinTable(
+		     name = "user_favorites",
+		     joinColumns = @JoinColumn(name = "user_id"),
+		     inverseJoinColumns = @JoinColumn(name = "property_id")
+		 )
+		 private Set<Property> favoriteProperties = new HashSet<>();
+	
+		 // Helper methods for managing favorites
+		 public void addFavorite(Property property) {
+		     this.favoriteProperties.add(property);
+		     property.getFavoritedByUsers().add(this);
+		 }
+	
+		 public void removeFavorite(Property property) {
+		     this.favoriteProperties.remove(property);
+		     property.getFavoritedByUsers().remove(this);
+		 }
 	    // Optional: Constructor for convenience
 	    public UserEntity(String firstName, String lastName, String email, String phoneNumber, String password, Role role) {
 	        this.firstName = firstName;

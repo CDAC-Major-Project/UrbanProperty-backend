@@ -11,8 +11,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.urbanproperty.custom_exceptions.ApiException;
 import com.urbanproperty.custom_exceptions.ResourceNotFoundException;
+import com.urbanproperty.dao.PropertyDao;
 import com.urbanproperty.dao.UserDao;
 import com.urbanproperty.dto.AllUsersResponse;
+import com.urbanproperty.dto.PropertyResponseDto;
 import com.urbanproperty.dto.UserRegistrationRequest;
 import com.urbanproperty.dto.UserResponse;
 import com.urbanproperty.entities.Role;
@@ -26,6 +28,7 @@ import lombok.AllArgsConstructor;
 public class UserServiceImpl implements UserService {
 
     private final UserDao userDao;
+    private final PropertyDao propertyDao;
     private final ModelMapper mapper;
 
     @Override
@@ -74,5 +77,37 @@ public class UserServiceImpl implements UserService {
         response.setSeller(usersByRole.getOrDefault(Role.SELLER, Collections.emptyList()));
 
         return response;
+    }
+    
+    //for for adding and removing property as favourite
+    @Override
+    public void addFavoriteProperty(Long userId, Long propertyId) {
+        UserEntity user = userDao.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
+        Property property = propertyDao.findById(propertyId)
+                .orElseThrow(() -> new ResourceNotFoundException("Property not found with id: " + propertyId));
+        
+        user.addFavorite(property);
+        // No need to call save, @Transactional will handle it.
+    }
+
+    @Override
+    public void removeFavoriteProperty(Long userId, Long propertyId) {
+        UserEntity user = userDao.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
+        Property property = propertyDao.findById(propertyId)
+                .orElseThrow(() -> new ResourceNotFoundException("Property not found with id: " + propertyId));
+
+        user.removeFavorite(property);
+    }
+    @Override
+    public List<PropertyResponseDto> getFavoriteProperties(Long userId) {
+        UserEntity user = userDao.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
+
+        return user.getFavoriteProperties().stream()
+                // Assuming you have a helper method or can create one to map Property to PropertyResponseDto
+                .map(property -> mapper.map(property, PropertyResponseDto.class))
+                .collect(Collectors.toList());
     }
 }
