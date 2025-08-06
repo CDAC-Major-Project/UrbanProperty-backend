@@ -20,4 +20,9 @@ public class ApiResponse {
 	 * especially for error messages or success notifications.
 	 */
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 }

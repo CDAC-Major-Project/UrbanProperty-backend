@@ -1,12 +1,7 @@
 package com.urbanproperty.entities;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,29 +24,29 @@ public class PropertyType extends BaseEntity {
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
-	public PropertyType(Long id, String name, String description) {
-		super();
-		this.id = id;
-		this.name = name;
-		this.description = description;
-	}
+//	public PropertyType(Long id, String name, String description) {
+//		super();
+//		this.id = id;
+//		this.name = name;
+//		this.description = description;
+//	}
 
-	@OneToMany(mappedBy = "property_types", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<Properties> properties = new ArrayList<>();
-	
-		//add helper method to add properties
-	public void addProperties(Properties property) {
-	  this.Properties.add(property);
-		// add a link property_types -> properties
-		property.setMyRestaurant(this);
-		}
-
-		// add helper method to remove properties 
-	public void removeProperties(Properties property) {
-		this.Properties.remove(property);
-		// remove a linkproperty_types -> properties
-		property.setMyRestaurant(null);
-	}
+//	@OneToMany(mappedBy = "property_types", cascade = CascadeType.ALL, orphanRemoval = true)
+//	private List<Properties> properties = new ArrayList<>();
+//	
+//		//add helper method to add properties
+//	public void addProperties(Properties property) {
+//	  this.Properties.add(property);
+//		// add a link property_types -> properties
+//		property.setMyRestaurant(this);
+//		}
+//
+//		// add helper method to remove properties 
+//	public void removeProperties(Properties property) {
+//		this.Properties.remove(property);
+//		// remove a linkproperty_types -> properties
+//		property.setMyRestaurant(null);
+//	}
 
     
     
