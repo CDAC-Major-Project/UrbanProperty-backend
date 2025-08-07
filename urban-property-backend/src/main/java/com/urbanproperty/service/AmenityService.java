@@ -9,7 +9,7 @@ public interface AmenityService {
 
     AmenityDto getAmenityById(Long id);
 
-    List<AmenityDto> getAllAmenity();
+    List<AmenityDto> getAllAmenities();
 
     AmenityDto updateAmenity(Long id, AmenityDto dto);
 

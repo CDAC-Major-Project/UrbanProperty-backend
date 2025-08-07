@@ -6,12 +6,13 @@ import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
 @AllArgsConstructor
-
+@NoArgsConstructor
 public class PropertyTypeDto {
 	@JsonProperty(access =Access.READ_ONLY)
 	private Long id ;
