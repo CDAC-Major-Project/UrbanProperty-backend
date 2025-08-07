@@ -17,6 +17,7 @@ import com.urbanproperty.dto.AllUsersResponse;
 import com.urbanproperty.dto.PropertyResponseDto;
 import com.urbanproperty.dto.UserRegistrationRequest;
 import com.urbanproperty.dto.UserResponse;
+import com.urbanproperty.entities.Property;
 import com.urbanproperty.entities.Role;
 import com.urbanproperty.entities.UserEntity;
 

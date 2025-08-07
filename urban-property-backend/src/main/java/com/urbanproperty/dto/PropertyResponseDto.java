@@ -6,11 +6,15 @@ import java.util.Set;
 
 import com.urbanproperty.entities.PropertyStatus;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class PropertyResponseDto {
     private Long id;
     private String title;

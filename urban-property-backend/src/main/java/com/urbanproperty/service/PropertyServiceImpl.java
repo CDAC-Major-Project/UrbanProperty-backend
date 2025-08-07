@@ -19,6 +19,7 @@ import com.urbanproperty.dto.PropertyRequestDto;
 import com.urbanproperty.dto.PropertyResponseDto;
 import com.urbanproperty.dto.PropertyTypeDto;
 import com.urbanproperty.dto.UserResponse;
+import com.urbanproperty.entities.Amenity;
 import com.urbanproperty.entities.Property;
 import com.urbanproperty.entities.PropertyImage;
 import com.urbanproperty.entities.PropertyStatus;
@@ -98,16 +99,16 @@ public class PropertyServiceImpl implements PropertyService {
     
     // Helper to map Entity to DTO
     private PropertyResponseDto mapToResponseDto(Property property) {
+    	// 1. Let ModelMapper handle all direct and nested mappings first.
         PropertyResponseDto dto = mapper.map(property, PropertyResponseDto.class);
-        // Manually map nested DTOs if ModelMapper has issues with deep mapping
-        dto.setSeller(mapper.map(property.getSeller(), UserResponse.class));
-        dto.setPropertyType(mapper.map(property.getPropertyType(), PropertyTypeDto.class));
-        dto.setAmenities(property.getAmenities().stream()
-                .map(amenity -> mapper.map(amenity, AmenityDto.class))
-                .collect(Collectors.toSet()));
-        dto.setImages(property.getImages().stream()
-                .map(PropertyImage::getImageUrl)
-                .collect(Collectors.toSet()));
+
+        // 2. Manually handle the custom mapping for the images.
+        if (property.getImages() != null) {
+            Set<String> imageUrls = property.getImages().stream()
+                                            .map(PropertyImage::getImageUrl)
+                                            .collect(Collectors.toSet());
+            dto.setImages(imageUrls);
+        }
         return dto;
     }
 }
