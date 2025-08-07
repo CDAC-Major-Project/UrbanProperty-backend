@@ -3,6 +3,8 @@ package com.urbanproperty.service;
 import java.util.List;
 
 import com.urbanproperty.dto.AllUsersResponse;
+import com.urbanproperty.dto.LoginRequestDto;
+import com.urbanproperty.dto.LoginResponseDto;
 import com.urbanproperty.dto.PropertyResponseDto;
 import com.urbanproperty.dto.UserRegistrationRequest;
 import com.urbanproperty.dto.UserResponse;
@@ -16,6 +18,8 @@ public interface UserService {
      * Retrieves all BUYER and SELLER users, separated by role.
      */
     AllUsersResponse getAllUsers();
+    
+    LoginResponseDto loginUser(LoginRequestDto request);
     
     //for properties
     void addFavoriteProperty(Long userId, Long propertyId);

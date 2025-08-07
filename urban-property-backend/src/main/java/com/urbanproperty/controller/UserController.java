@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.urbanproperty.dto.ApiResponse;
+import com.urbanproperty.dto.LoginRequestDto;
+import com.urbanproperty.dto.LoginResponseDto;
 import com.urbanproperty.dto.PropertyResponseDto;
 import com.urbanproperty.dto.UserRegistrationRequest;
 import com.urbanproperty.service.UserService;
@@ -37,7 +39,13 @@ public class UserController {
 		System.out.println("User Registration: " + dto);
 		return ResponseEntity.status(HttpStatus.CREATED).body(userService.registerUser(dto));
 	}
-
+	
+	 @Operation(summary = "User Login")
+	    @PostMapping("/login")
+	    public ResponseEntity<LoginResponseDto> login(@RequestBody @Valid LoginRequestDto request) {
+	        LoginResponseDto response = userService.loginUser(request);
+	        return ResponseEntity.ok(response);
+	    }
 	@GetMapping("/{id}")
 	@Operation(
 		    summary = "Get User by ID",

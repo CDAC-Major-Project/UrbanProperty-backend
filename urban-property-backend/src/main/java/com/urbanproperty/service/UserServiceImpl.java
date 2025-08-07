@@ -8,12 +8,13 @@ import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.urbanproperty.custom_exceptions.ApiException;
 import com.urbanproperty.custom_exceptions.ResourceNotFoundException;
 import com.urbanproperty.dao.PropertyDao;
 import com.urbanproperty.dao.UserDao;
 import com.urbanproperty.dto.AllUsersResponse;
+import com.urbanproperty.dto.LoginRequestDto;
+import com.urbanproperty.dto.LoginResponseDto;
 import com.urbanproperty.dto.PropertyResponseDto;
 import com.urbanproperty.dto.UserRegistrationRequest;
 import com.urbanproperty.dto.UserResponse;
@@ -53,6 +54,23 @@ public class UserServiceImpl implements UserService {
         return mapper.map(savedEntity, UserResponse.class);
     }
 //
+    @Override
+    public LoginResponseDto loginUser(LoginRequestDto request) {
+        // 1. Find the user by email
+        UserEntity user = userDao.findByEmail(request.getEmail())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + request.getEmail()));
+
+        // 2. Check if the provided password matches the stored password
+        if (!user.getPassword().equals(request.getPassword())) {
+            throw new ApiException("Invalid email or password.");
+        }
+
+        // 3. If credentials are correct, map to response DTOs
+        UserResponse userDetails = mapper.map(user, UserResponse.class);
+        
+        return new LoginResponseDto("Login successful!", userDetails);
+    }
+
     @Override
     public UserResponse getUserById(Long userId) {
         UserEntity user = userDao.findById(userId)
