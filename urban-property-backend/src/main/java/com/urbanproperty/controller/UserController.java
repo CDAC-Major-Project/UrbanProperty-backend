@@ -18,6 +18,7 @@ import com.urbanproperty.dto.LoginRequestDto;
 import com.urbanproperty.dto.LoginResponseDto;
 import com.urbanproperty.dto.PropertyResponseDto;
 import com.urbanproperty.dto.UserRegistrationRequest;
+import com.urbanproperty.dto.admin.AdminDashboardStatsDTO;
 import com.urbanproperty.service.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -85,4 +86,13 @@ public class UserController {
 	    return ResponseEntity.ok(favorites);
 	}
 
+	@GetMapping("/admin/dashboard")
+	@Operation(
+	    summary = "Get Admin Dashboard Statistics (Admin Only)",
+	    description = "Provides statistics for the current year, including total user count and a monthly breakdown of new buyers and sellers."
+	)
+	public ResponseEntity<AdminDashboardStatsDTO> getAdminDashboardStats() {
+	    AdminDashboardStatsDTO stats = userService.getDashboardStatistics();
+	    return ResponseEntity.ok(stats);
+	}
 }

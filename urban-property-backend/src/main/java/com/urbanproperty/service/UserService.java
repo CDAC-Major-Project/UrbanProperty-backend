@@ -8,6 +8,7 @@ import com.urbanproperty.dto.LoginResponseDto;
 import com.urbanproperty.dto.PropertyResponseDto;
 import com.urbanproperty.dto.UserRegistrationRequest;
 import com.urbanproperty.dto.UserResponse;
+import com.urbanproperty.dto.admin.AdminDashboardStatsDTO;
 
 public interface UserService {
 	UserResponse registerUser(UserRegistrationRequest dto);
@@ -18,6 +19,7 @@ public interface UserService {
      * Retrieves all BUYER and SELLER users, separated by role.
      */
     AllUsersResponse getAllUsers();
+    AdminDashboardStatsDTO getDashboardStatistics();
     
     LoginResponseDto loginUser(LoginRequestDto request);
     
