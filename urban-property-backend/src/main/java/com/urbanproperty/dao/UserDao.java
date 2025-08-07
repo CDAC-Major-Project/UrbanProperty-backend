@@ -16,7 +16,7 @@ public interface UserDao extends JpaRepository<UserEntity, Long> {
 
 	boolean existsByPhoneNumber(String phoneNumber);
 	
-	@Query("SELECT new com.urbanproperty.dto.UserMonthlyStats(" +
+	@Query("SELECT new com.urbanproperty.dto.admin.UserMonthlyStats(" +
 		       "MONTH(u.createdTime), " +
 		       "u.role, " +
 		       "COUNT(u.id)) " +
