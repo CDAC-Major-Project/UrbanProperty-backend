@@ -1,7 +1,13 @@
 package com.urbanproperty.entities;
 
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -20,7 +26,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class UserEntity extends BaseEntity{
+public class UserEntity extends BaseEntity implements UserDetails {
 	 @Column(name = "first_name", length = 50, nullable = false)
 	    private String firstName;
 
@@ -73,4 +79,23 @@ public class UserEntity extends BaseEntity{
 	        this.password = password;
 	        this.role = role;
 	    }
+	    
+	    //Spring Security UserDetails Methods ---
+        @Override
+        public Collection<? extends GrantedAuthority> getAuthorities() {
+            // Returns the user's role with the "ROLE_" prefix, as required by Spring Security.
+            return List.of(new SimpleGrantedAuthority("ROLE_" + this.role.name()));
+        }
+
+        @Override
+        public String getUsername() {
+            // Returns the user's email as their unique username.
+            return this.email;
+        }
+        
+        @Override
+        public boolean isEnabled() {
+            // Uses the existing 'isActive' field to determine if the user is enabled.
+            return this.isActive;
+        }
 }

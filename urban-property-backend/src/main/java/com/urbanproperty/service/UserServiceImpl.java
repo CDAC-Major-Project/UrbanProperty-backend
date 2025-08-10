@@ -12,6 +12,10 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +35,7 @@ import com.urbanproperty.dto.admin.UserMonthlyStats;
 import com.urbanproperty.entities.Property;
 import com.urbanproperty.entities.Role;
 import com.urbanproperty.entities.UserEntity;
+import com.urbanproperty.security.JwtUtils;
 
 import lombok.AllArgsConstructor;
 
@@ -42,6 +47,11 @@ public class UserServiceImpl implements UserService {
     private final UserDao userDao;
     private final PropertyDao propertyDao;
     private final ModelMapper mapper;
+    // Inject the PasswordEncoder bean
+    private PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager; // Added
+    private final JwtUtils jwtUtils; // Added
+    
 
     @Override
     public UserResponse registerUser(UserRegistrationRequest dto) {
@@ -60,25 +70,28 @@ public class UserServiceImpl implements UserService {
         }
         
         UserEntity entity = mapper.map(dto, UserEntity.class);
+        String password = entity.getPassword();
+        entity.setPassword(passwordEncoder.encode(password));
         UserEntity savedEntity = userDao.save(entity);
         return mapper.map(savedEntity, UserResponse.class);
     }
 //
     @Override
     public LoginResponseDto loginUser(LoginRequestDto request) {
-        // 1. Find the user by email
-        UserEntity user = userDao.findByEmail(request.getEmail())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + request.getEmail()));
+    	// 1. Authenticate using Spring Security's AuthenticationManager
+        // This will use your loadUserByUsername and PasswordEncoder automatically
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+        );
 
-        // 2. Check if the provided password matches the stored password
-        if (!user.getPassword().equals(request.getPassword())) {
-            throw new ApiException("Invalid email or password.");
-        }
+        // 2. If authentication is successful, generate the JWT token
+        String jwtToken = jwtUtils.generateJwtToken(authentication);
 
-        // 3. If credentials are correct, map to response DTOs
+        // 3. Get the user details from the authentication principal
+        UserEntity user = (UserEntity) authentication.getPrincipal();
         UserResponse userDetails = mapper.map(user, UserResponse.class);
         
-        return new LoginResponseDto("Login successful!", userDetails);
+        return new LoginResponseDto("Login successful!", jwtToken, userDetails);
     }
 
     @Override

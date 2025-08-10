@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,7 +30,7 @@ public class PropertyController {
 
     @Operation(summary = "Create a new Property Listing (Seller Only)")
     @PostMapping
-    // Add @PreAuthorize("hasRole('SELLER')") here later
+    @PreAuthorize("hasRole('SELLER')")
     public ResponseEntity<PropertyResponseDto> createProperty(@Valid @RequestBody PropertyRequestDto request) {
         PropertyResponseDto createdProperty = propertyService.createProperty(request);
         return new ResponseEntity<>(createdProperty, HttpStatus.CREATED);
@@ -51,6 +52,7 @@ public class PropertyController {
 
     @Operation(summary = "Add an Image to a Property")
     @PostMapping("/{id}/images")
+    @PreAuthorize("hasRole('SELLER')")
     public ResponseEntity<PropertyResponseDto> addImageToProperty(@PathVariable Long id, @RequestBody Map<String, String> payload) {
         String imageUrl = payload.get("imageUrl");
         if (imageUrl == null || imageUrl.isBlank()) {
