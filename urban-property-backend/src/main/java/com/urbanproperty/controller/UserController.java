@@ -41,12 +41,12 @@ public class UserController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(userService.registerUser(dto));
 	}
 	
-	 @Operation(summary = "User Login")
-	    @PostMapping("/login")
-	    public ResponseEntity<LoginResponseDto> login(@RequestBody @Valid LoginRequestDto request) {
-	        LoginResponseDto response = userService.loginUser(request);
-	        return ResponseEntity.ok(response);
-	    }
+	@Operation(summary = "User Login")
+	@PostMapping("/login")
+	public ResponseEntity<LoginResponseDto> login(@RequestBody @Valid LoginRequestDto request) {
+		LoginResponseDto response = userService.loginUser(request);
+		return ResponseEntity.ok(response);
+	}
 	@GetMapping("/{id}")
 	@Operation(
 		    summary = "Get User by ID",
