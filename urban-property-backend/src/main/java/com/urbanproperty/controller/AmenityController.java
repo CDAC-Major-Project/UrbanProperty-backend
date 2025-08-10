@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,6 +30,7 @@ public class AmenityController {
     private final AmenityService amenityService;
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(
     	    summary = "Create a new Amenity (Admin Only)",
     	    description = "Adds a new amenity to the system that can be associated with properties (e.g., 'Swimming Pool', 'Gym'). Requires ADMIN privileges."
@@ -59,6 +61,7 @@ public class AmenityController {
     }
     
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(
     	    summary = "Update an Amenity (Admin Only)",
     	    description = "Updates the name and/or icon URL of an existing amenity. Requires ADMIN privileges."
@@ -69,6 +72,7 @@ public class AmenityController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(
     	    summary = "Delete an Amenity (Admin Only)",
     	    description = "Deletes an amenity from the system based on its unique ID. Requires ADMIN privileges."
