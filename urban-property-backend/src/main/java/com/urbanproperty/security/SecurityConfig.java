@@ -30,7 +30,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 // -- Whitelist Public Endpoints --
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                .requestMatchers("/api/v1/users", "/api/v1/users/login").permitAll()
+                .requestMatchers("/api/v1/users/register", "/api/v1/users/login").permitAll()
                 .requestMatchers(HttpMethod.GET, 
                     "/api/v1/properties", 
                     "/api/v1/properties/{id}",
