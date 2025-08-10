@@ -91,7 +91,7 @@ public class UserServiceImpl implements UserService {
         UserEntity user = (UserEntity) authentication.getPrincipal();
         UserResponse userDetails = mapper.map(user, UserResponse.class);
         
-        return new LoginResponseDto("Login successful!", userDetails);
+        return new LoginResponseDto("Login successful!", jwtToken, userDetails);
     }
 
     @Override
