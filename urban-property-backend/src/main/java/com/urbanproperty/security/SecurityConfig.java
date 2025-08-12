@@ -1,5 +1,7 @@
 package com.urbanproperty.security;
 
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +14,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
@@ -24,6 +29,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+        	//for same-wifi
+        	.cors(cors -> cors.configurationSource(corsConfigurationSource()))
             // 1. Disable CSRF, as it's not needed for stateless REST APIs
             .csrf(csrf -> csrf.disable())
             // 2. Define authorization rules for all HTTP requests
@@ -56,5 +63,31 @@ public class SecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
+    }
+    // This bean defines the CORS configuration for the application.
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+
+        // IMPORTANT: Define the origins of your frontend application
+        configuration.setAllowedOrigins(Arrays.asList(
+                "http://localhost:5173",      // Vite default
+                "http://10.160.36.103:3000",  // 
+                "http://192.168.2.123:5173"  // ✅ ADD THIS LINE - Your Teammate's Frontend
+        ));
+     // Define which HTTP methods are allowed
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+
+        // Define which headers are allowed
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Cache-Control"));
+
+        // Allow credentials (e.g., cookies, authorization headers)
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        // Apply this CORS configuration to all paths in your application
+        source.registerCorsConfiguration("/**", configuration);
+
+        return source;
     }
 }

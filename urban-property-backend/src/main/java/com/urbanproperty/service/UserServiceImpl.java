@@ -33,6 +33,7 @@ import com.urbanproperty.dto.admin.AdminDashboardStatsDTO;
 import com.urbanproperty.dto.admin.MonthlyUserStatsDTO;
 import com.urbanproperty.dto.admin.UserMonthlyStats;
 import com.urbanproperty.entities.Property;
+import com.urbanproperty.entities.PropertyStatus;
 import com.urbanproperty.entities.Role;
 import com.urbanproperty.entities.UserEntity;
 import com.urbanproperty.security.JwtUtils;
@@ -129,6 +130,11 @@ public class UserServiceImpl implements UserService {
         Property property = propertyDao.findById(propertyId)
                 .orElseThrow(() -> new ResourceNotFoundException("Property not found with id: " + propertyId));
         
+        if (property.getStatus() != PropertyStatus.ACTIVE) {
+            // If not, throw an exception to prevent the action.
+            throw new ApiException("Cannot add a property that is not active to favorites.");
+        }
+
         user.addFavorite(property);
         // No need to call save, @Transactional will handle it.
     }

@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -27,11 +28,13 @@ public class UserRegistrationRequest {
 	private String email;
 
 	@NotBlank(message = "Phone number is required")
-	@Pattern(regexp = "^[6-9]\\d{9}$", message = "Invalid phone number format")
 	private String phoneNumber;
 
 	@NotBlank(message = "Password is required")
-	@Pattern(regexp = "((?=.*\\d)(?=.*[a-z])(?=.*[#@$*]).{5,20})", message = "Password must contain a digit, lowercase letter, special character [#@$*] and be 5-20 characters long")
+    @Size(min = 5, max = 20, message = "Password must be between 5 and 20 characters long")
+    @Pattern(regexp = ".*\\d.*", message = "Password must contain at least one digit")
+    @Pattern(regexp = ".*[a-z].*", message = "Password must contain at least one lowercase letter")
+    @Pattern(regexp = ".*[#@$*].*", message = "Password must contain at least one special character (#@$*)")
 	private String password;
 
 	@NotNull(message = "Role is required")

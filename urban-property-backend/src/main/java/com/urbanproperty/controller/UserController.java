@@ -88,6 +88,7 @@ public class UserController {
 	@GetMapping("/{userId}/favorites")
 	@PreAuthorize("@customSecurity.isOwnerOrAdmin(authentication, #userId)")
 	public ResponseEntity<List<PropertyResponseDto>> getFavorites(@PathVariable Long userId) {
+		System.out.println("request recieved");
 	    List<PropertyResponseDto> favorites = userService.getFavoriteProperties(userId);
 	    return ResponseEntity.ok(favorites);
 	}
