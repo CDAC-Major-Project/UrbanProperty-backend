@@ -33,4 +33,5 @@ public class PropertyResponseDto {
     private PropertyTypeDto propertyType;
     private Set<AmenityDto> amenities;
     private Set<String> images; // Just the URLs
+    private PropertyDetailsDto details;
 }

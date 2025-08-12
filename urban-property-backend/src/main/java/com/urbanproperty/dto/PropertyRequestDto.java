@@ -3,6 +3,7 @@ package com.urbanproperty.dto;
 import java.math.BigDecimal;
 import java.util.List;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -42,4 +43,7 @@ public class PropertyRequestDto {
 
     @NotEmpty(message = "At least one amenity is required")
     private List<Long> amenityIds;
+    
+    @Valid 
+    private PropertyDetailsDto details;
 }
