@@ -76,6 +76,8 @@ public class Property extends BaseEntity {
     @ManyToMany(mappedBy = "favoriteProperties")
     private Set<UserEntity> favoritedByUsers = new HashSet<>();
 
+    @OneToOne(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private PropertyDetails details;
     // --- Helper methods for images ---
     public void addImage(PropertyImage image) {
         images.add(image);
@@ -86,4 +88,14 @@ public class Property extends BaseEntity {
         images.remove(image);
         image.setProperty(null);
     }
+    //--- Helper methods for property details---
+    public void setDetails(PropertyDetails details) {
+        if (details != null) {
+            this.details = details;
+            details.setProperty(this);
+        }
+    }
 }
+
+
+
