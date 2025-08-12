@@ -49,6 +49,13 @@ public class PropertyController {
         PropertyResponseDto property = propertyService.getPropertyById(id);
         return ResponseEntity.ok(property);
     }
+    @Operation(summary = "Get All Properties for a Specific Seller (Seller or Admin Only)")
+    @GetMapping("/seller/{sellerId}")
+    @PreAuthorize("@customSecurity.isOwnerOrAdmin(authentication, #sellerId)")
+    public ResponseEntity<List<PropertyResponseDto>> getAllPropertiesBySeller(@PathVariable Long sellerId) {
+        List<PropertyResponseDto> properties = propertyService.getAllPropertiesBySeller(sellerId);
+        return ResponseEntity.ok(properties);
+    }
 
     @Operation(summary = "Add an Image to a Property")
     @PostMapping("/{id}/images")

@@ -72,6 +72,17 @@ public class PropertyServiceImpl implements PropertyService {
                 .orElseThrow(() -> new ResourceNotFoundException("Property not found with id: " + id));
         return mapToResponseDto(property);
     }
+    
+    @Override
+    public List<PropertyResponseDto> getAllPropertiesBySeller(Long sellerId) {
+        // 1. Call the new DAO method to fetch all properties for the given seller.
+        List<Property> properties = propertyDao.findBySellerId(sellerId);
+        
+        // 2. Stream the list of entities and map each one to a response DTO.
+        return properties.stream()
+                .map(this::mapToResponseDto)
+                .collect(Collectors.toList());
+    }
 
     @Override
     public List<PropertyResponseDto> getAllActiveProperties() {

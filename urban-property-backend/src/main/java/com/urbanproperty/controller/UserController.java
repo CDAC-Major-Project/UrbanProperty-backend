@@ -48,6 +48,7 @@ public class UserController {
 		LoginResponseDto response = userService.loginUser(request);
 		return ResponseEntity.ok(response);
 	}
+	
 	@GetMapping("/{id}")
 	@PreAuthorize("@customSecurity.isOwnerOrAdmin(authentication, #id)")
 	@Operation(
