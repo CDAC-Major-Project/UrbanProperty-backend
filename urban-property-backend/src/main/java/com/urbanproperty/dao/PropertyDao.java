@@ -10,4 +10,6 @@ import java.util.List;
 @Repository
 public interface PropertyDao extends JpaRepository<Property, Long> {
     List<Property> findByStatus(PropertyStatus status);
+    
+    List<Property> findBySellerId(Long sellerId);
 }

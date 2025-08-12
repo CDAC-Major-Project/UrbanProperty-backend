@@ -9,5 +9,6 @@ public interface PropertyService {
     PropertyResponseDto getPropertyById(Long id);
     List<PropertyResponseDto> getAllActiveProperties();
     PropertyResponseDto addImageToProperty(Long propertyId, String imageUrl);
-    // Update and Delete methods can be added here later
+    
+    List<PropertyResponseDto> getAllPropertiesBySeller(Long sellerId);
 }

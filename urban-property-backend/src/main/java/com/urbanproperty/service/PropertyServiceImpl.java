@@ -56,7 +56,7 @@ public class PropertyServiceImpl implements PropertyService {
         property.setSeller(seller);
         property.setPropertyType(propertyType);
         property.setAmenities(amenities);
-        property.setStatus(PropertyStatus.PENDING_APPROVAL);
+        property.setStatus(PropertyStatus.PENDING);
 
         if (request.getDetails() != null) {
             PropertyDetails details = mapper.map(request.getDetails(), PropertyDetails.class);
@@ -71,6 +71,17 @@ public class PropertyServiceImpl implements PropertyService {
         Property property = propertyDao.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Property not found with id: " + id));
         return mapToResponseDto(property);
+    }
+    
+    @Override
+    public List<PropertyResponseDto> getAllPropertiesBySeller(Long sellerId) {
+        // 1. Call the new DAO method to fetch all properties for the given seller.
+        List<Property> properties = propertyDao.findBySellerId(sellerId);
+        
+        // 2. Stream the list of entities and map each one to a response DTO.
+        return properties.stream()
+                .map(this::mapToResponseDto)
+                .collect(Collectors.toList());
     }
 
     @Override
