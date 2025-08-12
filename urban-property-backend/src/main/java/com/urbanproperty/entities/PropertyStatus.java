@@ -1,7 +1,7 @@
 package com.urbanproperty.entities;
 
 public enum PropertyStatus {
-    PENDING_APPROVAL,
+    PENDING,
     ACTIVE,
     SOLD,
     EXPIRED,

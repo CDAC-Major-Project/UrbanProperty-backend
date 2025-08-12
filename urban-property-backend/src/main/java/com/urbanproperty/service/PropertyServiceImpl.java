@@ -56,7 +56,7 @@ public class PropertyServiceImpl implements PropertyService {
         property.setSeller(seller);
         property.setPropertyType(propertyType);
         property.setAmenities(amenities);
-        property.setStatus(PropertyStatus.PENDING_APPROVAL);
+        property.setStatus(PropertyStatus.PENDING);
 
         if (request.getDetails() != null) {
             PropertyDetails details = mapper.map(request.getDetails(), PropertyDetails.class);

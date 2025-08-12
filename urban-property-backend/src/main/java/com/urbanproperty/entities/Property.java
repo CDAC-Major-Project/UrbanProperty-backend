@@ -49,7 +49,7 @@ public class Property extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private PropertyStatus status = PropertyStatus.PENDING_APPROVAL;
+    private PropertyStatus status = PropertyStatus.PENDING;
 
     // --- Relationships ---
 
