@@ -14,13 +14,12 @@ import com.urbanproperty.dao.AmenityDao;
 import com.urbanproperty.dao.PropertyDao;
 import com.urbanproperty.dao.PropertyTypeDao;
 import com.urbanproperty.dao.UserDao;
-import com.urbanproperty.dto.AmenityDto;
+import com.urbanproperty.dto.PropertyDetailsDto;
 import com.urbanproperty.dto.PropertyRequestDto;
 import com.urbanproperty.dto.PropertyResponseDto;
-import com.urbanproperty.dto.PropertyTypeDto;
-import com.urbanproperty.dto.UserResponse;
 import com.urbanproperty.entities.Amenity;
 import com.urbanproperty.entities.Property;
+import com.urbanproperty.entities.PropertyDetails;
 import com.urbanproperty.entities.PropertyImage;
 import com.urbanproperty.entities.PropertyStatus;
 import com.urbanproperty.entities.PropertyType;
@@ -59,6 +58,10 @@ public class PropertyServiceImpl implements PropertyService {
         property.setAmenities(amenities);
         property.setStatus(PropertyStatus.PENDING_APPROVAL);
 
+        if (request.getDetails() != null) {
+            PropertyDetails details = mapper.map(request.getDetails(), PropertyDetails.class);
+            property.setDetails(details); // Use the helper method to set the bidirectional link
+        }
         Property savedProperty = propertyDao.save(property);
         return mapToResponseDto(savedProperty);
     }
@@ -108,6 +111,9 @@ public class PropertyServiceImpl implements PropertyService {
                                             .map(PropertyImage::getImageUrl)
                                             .collect(Collectors.toSet());
             dto.setImages(imageUrls);
+        }
+        if (property.getDetails() != null) {
+            dto.setDetails(mapper.map(property.getDetails(), PropertyDetailsDto.class));
         }
         return dto;
     }
