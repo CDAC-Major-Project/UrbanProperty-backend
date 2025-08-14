@@ -21,5 +21,5 @@ public class AmenityDto {
 	  @NotBlank(message = "Name cannot be blank")
 	  private String name;
 	  
-	  private  String iconUrl;
+//	  private  String iconUrl;
 }
