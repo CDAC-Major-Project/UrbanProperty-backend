@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,12 +36,13 @@ public class PropertyController {
     @PreAuthorize("hasRole('SELLER')")
     public ResponseEntity<PropertyResponseDto> createProperty(
             @RequestParam("propertyData") String propertyDataString,
-            @RequestParam("image") MultipartFile imageFile
+            @RequestParam("image") MultipartFile imageFile,
+            Authentication authentication
     ) throws IOException {
     	// deserializing the JSON string back into DTO
         PropertyRequestDto requestDto = objectMapper.readValue(propertyDataString, PropertyRequestDto.class);
         
-        PropertyResponseDto createdProperty = propertyService.createPropertyWithImage(requestDto, imageFile);
+        PropertyResponseDto createdProperty = propertyService.createPropertyWithImage(requestDto, imageFile, authentication);
         return new ResponseEntity<>(createdProperty, HttpStatus.CREATED);
     }
 

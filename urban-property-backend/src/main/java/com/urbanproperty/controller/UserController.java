@@ -94,7 +94,7 @@ public class UserController {
 	    return ResponseEntity.ok(favorites);
 	}
 
-	@GetMapping("/admin/dashboard")
+	@GetMapping("/admin/seller-buyer-count")
 	@PreAuthorize("hasRole('ADMIN')")
 	@Operation(
 	    summary = "Get Admin Dashboard Statistics (Admin Only)",

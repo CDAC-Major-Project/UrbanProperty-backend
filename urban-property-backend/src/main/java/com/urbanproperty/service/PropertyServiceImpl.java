@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -44,10 +45,14 @@ public class PropertyServiceImpl implements PropertyService {
     private ImageUploadService imageUploadService;
 
     @Override
-    public PropertyResponseDto createPropertyWithImage(PropertyRequestDto request, MultipartFile imageFile) throws IOException {
+    public PropertyResponseDto createPropertyWithImage(PropertyRequestDto request, MultipartFile imageFile, Authentication authentication) throws IOException {
         
-    	UserEntity seller = userDao.findById(request.getSellerId())
-                .orElseThrow(() -> new ResourceNotFoundException("Seller not found with id: " + request.getSellerId()));
+    	// Get the email of the logged-in user from the authenticat	ion token
+        String sellerEmail = authentication.getName();
+        
+        // Finding seller in the database using their email
+        UserEntity seller = userDao.findByEmail(sellerEmail)
+                .orElseThrow(() -> new ResourceNotFoundException("Authenticated user '" + sellerEmail + "' not found in database."));
 
         PropertyType propertyType = propertyTypeDao.findById(request.getPropertyTypeId())
                 .orElseThrow(() -> new ResourceNotFoundException("PropertyType not found with id: " + request.getPropertyTypeId()));
@@ -84,34 +89,6 @@ public class PropertyServiceImpl implements PropertyService {
         Property finalProperty = propertyDao.save(savedProperty);
 
         return mapToResponseDto(finalProperty);
-    }
-    
-    @Override
-    public PropertyResponseDto createProperty(PropertyRequestDto request) {
-        UserEntity seller = userDao.findById(request.getSellerId())
-                .orElseThrow(() -> new ResourceNotFoundException("Seller not found with id: " + request.getSellerId()));
-
-        PropertyType propertyType = propertyTypeDao.findById(request.getPropertyTypeId())
-                .orElseThrow(() -> new ResourceNotFoundException("PropertyType not found with id: " + request.getPropertyTypeId()));
-
-        List<Amenity> amenitiesList = amenityDao.findAllById(request.getAmenityIds());
-        if (amenitiesList.size() != request.getAmenityIds().size()) {
-            throw new ResourceNotFoundException("One or more amenities not found.");
-        }
-        Set<Amenity> amenities = new HashSet<>(amenitiesList);
-
-        Property property = mapper.map(request, Property.class);
-        property.setSeller(seller);
-        property.setPropertyType(propertyType);
-        property.setAmenities(amenities);
-        property.setStatus(PropertyStatus.PENDING);
-
-        if (request.getDetails() != null) {
-            PropertyDetails details = mapper.map(request.getDetails(), PropertyDetails.class);
-            property.setDetails(details); // Use the helper method to set the bidirectional link
-        }
-        Property savedProperty = propertyDao.save(property);
-        return mapToResponseDto(savedProperty);
     }
 
     @Override
