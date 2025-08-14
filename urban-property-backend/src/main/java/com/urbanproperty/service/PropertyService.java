@@ -12,7 +12,7 @@ public interface PropertyService {
     PropertyResponseDto createProperty(PropertyRequestDto request);
     PropertyResponseDto getPropertyById(Long id);
     List<PropertyResponseDto> getAllActiveProperties();
-    PropertyResponseDto addImageToProperty(Long propertyId, String imageUrl);
+    PropertyResponseDto addImageToProperty(Long propertyId, MultipartFile imageFile) throws IOException;
     
     List<PropertyResponseDto> getAllPropertiesBySeller(Long sellerId);
     

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.urbanproperty.custom_exceptions.ApiException;
 import com.urbanproperty.custom_exceptions.ResourceNotFoundException;
 import com.urbanproperty.dao.AmenityDao;
 import com.urbanproperty.dao.PropertyDao;
@@ -140,22 +141,35 @@ public class PropertyServiceImpl implements PropertyService {
     }
 
     @Override
-    public PropertyResponseDto addImageToProperty(Long propertyId, String imageUrl) {
+    public PropertyResponseDto addImageToProperty(Long propertyId, MultipartFile imageFile) throws IOException {
         Property property = propertyDao.findById(propertyId)
                 .orElseThrow(() -> new ResourceNotFoundException("Property not found with id: " + propertyId));
 
+        String originalFilename = imageFile.getOriginalFilename();
+        String sanitizedFilename = originalFilename.substring(0, originalFilename.lastIndexOf("."));
+        String publicId = "properties"+"/"+ propertyId + "/" + sanitizedFilename;
+        
+        Map uploadResult;
+        try {
+            uploadResult = imageUploadService.uploadImage(imageFile, publicId);
+        } catch (RuntimeException e) {
+            if (e.getMessage().contains("resource already exists")) {
+                throw new ApiException("An image with the name '" + originalFilename + "' already exists for this property.");
+            }
+            throw e;
+        }
+        
         PropertyImage newImage = new PropertyImage();
-        newImage.setImageUrl(imageUrl);
+        newImage.setImageUrl((String) uploadResult.get("secure_url"));
         
         // Make first image primary by default
-        if (property.getImages().isEmpty()) {
+        if (property.getImages() == null || property.getImages().isEmpty()) {
             newImage.setPrimary(true);
         }
         
         property.addImage(newImage);
-        
         Property updatedProperty = propertyDao.save(property);
-        return mapToResponseDto(updatedProperty);
+        return mapper.map(updatedProperty, PropertyResponseDto.class);
     }
     
     // Helper to map Entity to DTO
