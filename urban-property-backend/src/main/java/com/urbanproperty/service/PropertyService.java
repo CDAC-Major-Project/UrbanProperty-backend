@@ -1,8 +1,12 @@
 package com.urbanproperty.service;
 
+import java.io.IOException;
+import java.util.List;
+
+import org.springframework.web.multipart.MultipartFile;
+
 import com.urbanproperty.dto.PropertyRequestDto;
 import com.urbanproperty.dto.PropertyResponseDto;
-import java.util.List;
 
 public interface PropertyService {
     PropertyResponseDto createProperty(PropertyRequestDto request);
@@ -11,4 +15,7 @@ public interface PropertyService {
     PropertyResponseDto addImageToProperty(Long propertyId, String imageUrl);
     
     List<PropertyResponseDto> getAllPropertiesBySeller(Long sellerId);
+    
+    PropertyResponseDto createPropertyWithImage(PropertyRequestDto request, MultipartFile imageFile) throws IOException;
+
 }
