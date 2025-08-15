@@ -93,15 +93,4 @@ public class UserController {
 	    List<PropertyResponseDto> favorites = userService.getFavoriteProperties(userId);
 	    return ResponseEntity.ok(favorites);
 	}
-
-	@GetMapping("/admin/seller-buyer-count")
-	@PreAuthorize("hasRole('ADMIN')")
-	@Operation(
-	    summary = "Get Admin Dashboard Statistics (Admin Only)",
-	    description = "Provides statistics for the current year, including total user count and a monthly breakdown of new buyers and sellers."
-	)
-	public ResponseEntity<AdminDashboardStatsDTO> getAdminDashboardStats() {
-	    AdminDashboardStatsDTO stats = userService.getDashboardStatistics();
-	    return ResponseEntity.ok(stats);
-	}
 }
