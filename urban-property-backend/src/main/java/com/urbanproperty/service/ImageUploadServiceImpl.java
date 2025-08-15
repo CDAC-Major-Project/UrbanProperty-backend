@@ -25,4 +25,9 @@ public class ImageUploadServiceImpl implements ImageUploadService {
 
         return this.cloudinary.uploader().upload(file.getBytes(), options);
     }
+    @Override
+    public void deleteImage(String publicId) throws IOException {
+        // Used the 'destroy' method from the uploader to delete by public_id
+        cloudinary.uploader().destroy(publicId, new HashMap<>());
+    }
 }

@@ -22,6 +22,7 @@ import com.urbanproperty.dao.UserDao;
 import com.urbanproperty.dto.PropertyDetailsDto;
 import com.urbanproperty.dto.PropertyRequestDto;
 import com.urbanproperty.dto.PropertyResponseDto;
+import com.urbanproperty.dto.PropertyUpdateDto;
 import com.urbanproperty.entities.Amenity;
 import com.urbanproperty.entities.Property;
 import com.urbanproperty.entities.PropertyDetails;
@@ -91,6 +92,57 @@ public class PropertyServiceImpl implements PropertyService {
         return mapToResponseDto(finalProperty);
     }
 
+    @Override
+    public PropertyResponseDto updateProperty(Long propertyId, PropertyUpdateDto updateDto, MultipartFile imageFile, Authentication authentication) throws IOException {
+        
+        // 1. Fetch the property and the currently logged-in user
+        Property property = propertyDao.findById(propertyId)
+                .orElseThrow(() -> new ResourceNotFoundException("Property not found with id: " + propertyId));
+        
+        UserEntity seller = userDao.findByEmail(authentication.getName())
+                .orElseThrow(() -> new ResourceNotFoundException("Authenticated user not found"));
+
+        // 2. SECURITY CHECK: Verify that the logged-in user owns this property
+        if (!property.getSeller().getId().equals(seller.getId())) {
+            throw new ApiException("You do not have permission to edit this property.");
+        }
+
+        // 3. Handle Image Update (if a new image is provided)
+        if (imageFile != null && !imageFile.isEmpty()) {
+            if (property.getImages() != null && !property.getImages().isEmpty()) {
+                PropertyImage oldImage = property.getImages().iterator().next();
+                String folder = "properties/" + propertyId;
+                // Upload new image
+                String originalFilename = imageFile.getOriginalFilename();
+                String sanitizedFilename = originalFilename.substring(0, originalFilename.lastIndexOf("."));
+                String newPublicId = folder + "/" + sanitizedFilename;
+                Map uploadResult = imageUploadService.uploadImage(imageFile, newPublicId);
+                
+                // Update the URL on the existing image entity
+                oldImage.setImageUrl((String) uploadResult.get("secure_url"));
+            }
+        }
+
+        // 4. Handle Text Data Update (if new data is provided)
+        if (updateDto != null) {
+            mapper.map(updateDto, property);
+            
+            // Handle relationships if they are part of the update
+            if (updateDto.getPropertyTypeId() != null) {
+                PropertyType propertyType = propertyTypeDao.findById(updateDto.getPropertyTypeId()).orElseThrow(() -> new ResourceNotFoundException("PropertyType not found"));
+                property.setPropertyType(propertyType);
+            }
+            if (updateDto.getAmenityIds() != null && !updateDto.getAmenityIds().isEmpty()) {
+                Set<Amenity> amenities = new HashSet<>(amenityDao.findAllById(updateDto.getAmenityIds()));
+                property.setAmenities(amenities);
+            }
+        }
+
+        // 5. Save the updated property and return the response
+        Property updatedProperty = propertyDao.save(property);
+        return mapToResponseDto(updatedProperty);
+    }
+    
     @Override
     public PropertyResponseDto getPropertyById(Long id) {
         Property property = propertyDao.findById(id)

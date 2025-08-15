@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.urbanproperty.dto.PropertyRequestDto;
 import com.urbanproperty.dto.PropertyResponseDto;
+import com.urbanproperty.dto.PropertyUpdateDto;
 
 public interface PropertyService {
     PropertyResponseDto getPropertyById(Long id);
@@ -17,5 +18,6 @@ public interface PropertyService {
     List<PropertyResponseDto> getAllPropertiesBySeller(Long sellerId);
     
     PropertyResponseDto createPropertyWithImage(PropertyRequestDto request, MultipartFile imageFile, Authentication authentication) throws IOException;
+    PropertyResponseDto updateProperty(Long propertyId, PropertyUpdateDto updateDto, MultipartFile imageFile, Authentication authentication) throws IOException;
 
 }
