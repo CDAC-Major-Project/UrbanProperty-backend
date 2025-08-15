@@ -23,4 +23,5 @@ public interface PropertyService {
     PropertyResponseDto updateProperty(Long propertyId, PropertyUpdateDto updateDto, MultipartFile imageFile, Authentication authentication) throws IOException;
     
     Map<PropertyStatus, Long> getPropertyStatusCounts();
+    Map<String, Long> getMonthlyPropertyStatsForCurrentYear();
 }

@@ -1,5 +1,13 @@
 package com.urbanproperty.controller;
 
+import java.util.Map;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.urbanproperty.dto.admin.AdminDashboardStatsDTO;
 import com.urbanproperty.entities.PropertyStatus;
 import com.urbanproperty.service.PropertyService;
@@ -7,13 +15,6 @@ import com.urbanproperty.service.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/admin")
@@ -22,7 +23,7 @@ import java.util.Map;
 public class AdminController {
 
     private final PropertyService propertyService;
-    private UserService userService;
+    private final UserService userService;
 
     @Operation(summary = "Get counts of properties grouped by status (Admin Only)")
     @GetMapping("/dashboard/property-status-counts")
@@ -40,4 +41,11 @@ public class AdminController {
 	    AdminDashboardStatsDTO stats = userService.getDashboardStatistics();
 	    return ResponseEntity.ok(stats);
 	}
+    
+    @Operation(summary = "Get monthly property listing stats for the current year (Admin Only)")
+    @GetMapping("/dashboard/monthly-property-stats")
+    public ResponseEntity<Map<String, Long>> getMonthlyPropertyStats() {
+        Map<String, Long> monthlyStats = propertyService.getMonthlyPropertyStatsForCurrentYear();
+        return ResponseEntity.ok(monthlyStats);
+    }
 }

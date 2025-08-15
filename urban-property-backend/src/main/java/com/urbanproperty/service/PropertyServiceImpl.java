@@ -1,8 +1,12 @@
 package com.urbanproperty.service;
 
 import java.io.IOException;
+import java.time.Month;
+import java.time.format.TextStyle;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -22,8 +26,9 @@ import com.urbanproperty.dao.UserDao;
 import com.urbanproperty.dto.PropertyDetailsDto;
 import com.urbanproperty.dto.PropertyRequestDto;
 import com.urbanproperty.dto.PropertyResponseDto;
-import com.urbanproperty.dto.PropertyStatusCountDto;
 import com.urbanproperty.dto.PropertyUpdateDto;
+import com.urbanproperty.dto.admin.MonthlyPropertyStatsDto;
+import com.urbanproperty.dto.admin.PropertyStatusCountDto;
 import com.urbanproperty.entities.Amenity;
 import com.urbanproperty.entities.Property;
 import com.urbanproperty.entities.PropertyDetails;
@@ -231,5 +236,25 @@ public class PropertyServiceImpl implements PropertyService {
                     PropertyStatusCountDto::getStatus,
                     PropertyStatusCountDto::getCount
                 ));
+    }
+    
+    @Override
+    public Map<String, Long> getMonthlyPropertyStatsForCurrentYear() {
+        // Use a LinkedHashMap to maintain the order in which months are inserted.
+        Map<String, Long> monthlyStatsMap = new LinkedHashMap<>();
+        
+        for (int i = 1; i <= 12; i++) {
+            String monthName = Month.of(i).getDisplayName(TextStyle.SHORT, Locale.ENGLISH).toUpperCase();
+            monthlyStatsMap.put(monthName, 0L);
+        }
+
+        // Fetch and update with actual counts
+        List<MonthlyPropertyStatsDto> dbStats = propertyDao.countPropertiesByMonthForCurrentYear();
+        dbStats.forEach(stat -> {
+            String monthName = Month.of(stat.getMonth()).getDisplayName(TextStyle.SHORT, Locale.ENGLISH).toUpperCase();
+            monthlyStatsMap.put(monthName, stat.getCount());
+        });
+
+        return monthlyStatsMap;
     }
 }
