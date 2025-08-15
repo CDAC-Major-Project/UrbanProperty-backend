@@ -23,7 +23,7 @@ import lombok.AllArgsConstructor;
 public class AdminController {
 
     private final PropertyService propertyService;
-    private UserService userService;
+    private final UserService userService;
 
     @Operation(summary = "Get counts of properties grouped by status (Admin Only)")
     @GetMapping("/dashboard/property-status-counts")

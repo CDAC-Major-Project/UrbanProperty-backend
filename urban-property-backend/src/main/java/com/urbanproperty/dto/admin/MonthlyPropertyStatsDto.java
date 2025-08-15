@@ -1,4 +1,4 @@
-package com.urbanproperty.dto;
+package com.urbanproperty.dto.admin;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
