@@ -10,14 +10,17 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.urbanproperty.custom_exceptions.ApiException;
 import com.urbanproperty.dto.PropertyRequestDto;
 import com.urbanproperty.dto.PropertyResponseDto;
+import com.urbanproperty.dto.PropertyUpdateDto;
 import com.urbanproperty.service.PropertyService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -46,6 +49,30 @@ public class PropertyController {
         return new ResponseEntity<>(createdProperty, HttpStatus.CREATED);
     }
 
+    @Operation(summary = "Update an Existing Property (Owner Only)")
+    @PutMapping("/{propertyId}")
+    @PreAuthorize("hasRole('SELLER')")
+    public ResponseEntity<PropertyResponseDto> updateProperty(
+            @PathVariable Long propertyId,
+            @RequestParam(name = "propertyData", required = false) String updatePropertyString,
+            @RequestParam(name = "image", required = false) MultipartFile imageFile,
+            Authentication authentication
+    ) throws IOException {
+
+        if (updatePropertyString == null && (imageFile == null || imageFile.isEmpty())) {
+            throw new ApiException("No update data provided. Please provide either property data or a new image.");
+        }
+
+        PropertyUpdateDto updateDto = null;
+        if (updatePropertyString != null) {
+            // Deserialize the JSON string to our new DTO
+            updateDto = objectMapper.readValue(updatePropertyString, PropertyUpdateDto.class);
+        }
+        
+        PropertyResponseDto updatedProperty = propertyService.updateProperty(propertyId, updateDto, imageFile, authentication);
+        return ResponseEntity.ok(updatedProperty);
+    }
+    
     @Operation(summary = "Get All Active Properties (Public)")
     @GetMapping
     public ResponseEntity<List<PropertyResponseDto>> getAllActiveProperties() {

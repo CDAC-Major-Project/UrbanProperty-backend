@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.urbanproperty.dto.PropertyRequestDto;
 import com.urbanproperty.dto.PropertyResponseDto;
+import com.urbanproperty.dto.PropertyUpdateDto;
 
 public interface PropertyService {
     PropertyResponseDto getPropertyById(Long id);
