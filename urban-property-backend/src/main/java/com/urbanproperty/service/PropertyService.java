@@ -17,5 +17,6 @@ public interface PropertyService {
     List<PropertyResponseDto> getAllPropertiesBySeller(Long sellerId);
     
     PropertyResponseDto createPropertyWithImage(PropertyRequestDto request, MultipartFile imageFile, Authentication authentication) throws IOException;
+    PropertyResponseDto updateProperty(Long propertyId, PropertyUpdateDto updateDto, MultipartFile imageFile, Authentication authentication) throws IOException;
 
 }
