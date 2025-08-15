@@ -1,4 +1,4 @@
-package com.urbanproperty.dto;
+package com.urbanproperty.dto.admin;
 
 import com.urbanproperty.entities.PropertyStatus;
 import lombok.AllArgsConstructor;
