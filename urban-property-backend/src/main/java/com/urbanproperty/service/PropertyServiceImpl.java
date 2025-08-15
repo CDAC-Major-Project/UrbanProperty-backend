@@ -22,6 +22,7 @@ import com.urbanproperty.dao.UserDao;
 import com.urbanproperty.dto.PropertyDetailsDto;
 import com.urbanproperty.dto.PropertyRequestDto;
 import com.urbanproperty.dto.PropertyResponseDto;
+import com.urbanproperty.dto.PropertyStatusCountDto;
 import com.urbanproperty.dto.PropertyUpdateDto;
 import com.urbanproperty.entities.Amenity;
 import com.urbanproperty.entities.Property;
@@ -217,5 +218,18 @@ public class PropertyServiceImpl implements PropertyService {
             dto.setDetails(mapper.map(property.getDetails(), PropertyDetailsDto.class));
         }
         return dto;
+    }
+    
+    //for admin dashboard page, getting the status count
+    @Override
+    public Map<PropertyStatus, Long> getPropertyStatusCounts() {
+        List<PropertyStatusCountDto> counts = propertyDao.countPropertiesByStatus();
+
+        // 2. Converting the list into Map using Java Streams
+        return counts.stream()
+                .collect(Collectors.toMap(
+                    PropertyStatusCountDto::getStatus,
+                    PropertyStatusCountDto::getCount
+                ));
     }
 }

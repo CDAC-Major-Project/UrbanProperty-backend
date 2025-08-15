@@ -2,6 +2,7 @@ package com.urbanproperty.service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.web.multipart.MultipartFile;
@@ -9,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.urbanproperty.dto.PropertyRequestDto;
 import com.urbanproperty.dto.PropertyResponseDto;
 import com.urbanproperty.dto.PropertyUpdateDto;
+import com.urbanproperty.entities.PropertyStatus;
 
 public interface PropertyService {
     PropertyResponseDto getPropertyById(Long id);
@@ -19,5 +21,6 @@ public interface PropertyService {
     
     PropertyResponseDto createPropertyWithImage(PropertyRequestDto request, MultipartFile imageFile, Authentication authentication) throws IOException;
     PropertyResponseDto updateProperty(Long propertyId, PropertyUpdateDto updateDto, MultipartFile imageFile, Authentication authentication) throws IOException;
-
+    
+    Map<PropertyStatus, Long> getPropertyStatusCounts();
 }
