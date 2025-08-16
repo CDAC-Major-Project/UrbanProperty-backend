@@ -1,13 +1,17 @@
 package com.urbanproperty.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.urbanproperty.dto.PendingPropertyResponseDto;
 import com.urbanproperty.dto.admin.AdminDashboardStatsDTO;
 import com.urbanproperty.entities.PropertyStatus;
 import com.urbanproperty.service.PropertyService;
@@ -19,7 +23,7 @@ import lombok.AllArgsConstructor;
 @RestController
 @RequestMapping("/api/v1/admin")
 @AllArgsConstructor
-@PreAuthorize("hasRole('ADMIN')") // Secures all endpoints in this controller
+@PreAuthorize("hasRole('ADMIN')") 
 public class AdminController {
 
     private final PropertyService propertyService;
@@ -47,5 +51,19 @@ public class AdminController {
     public ResponseEntity<Map<String, Long>> getMonthlyPropertyStats() {
         Map<String, Long> monthlyStats = propertyService.getMonthlyPropertyStatsForCurrentYear();
         return ResponseEntity.ok(monthlyStats);
+    }
+    
+    @Operation(summary = "Get All pending Properties (Admin)")
+    @GetMapping("/pending")
+    public ResponseEntity<List<PendingPropertyResponseDto>> getAllPendingProperties() {
+    	List<PendingPropertyResponseDto> pendingProperties = propertyService.getAllPendingProperties();
+        return ResponseEntity.ok(pendingProperties);
+    }
+    
+    @Operation(summary = "Approve a pending property listing (Admin Only)")
+    @PutMapping("/properties/{propertyId}/approve")
+    public ResponseEntity<List<PendingPropertyResponseDto>> approveProperty(@PathVariable Long propertyId) {
+        List<PendingPropertyResponseDto> remainingPendingProperties = propertyService.approveProperty(propertyId);
+        return ResponseEntity.ok(remainingPendingProperties);
     }
 }

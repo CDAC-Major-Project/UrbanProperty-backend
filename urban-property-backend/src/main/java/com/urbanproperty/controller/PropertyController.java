@@ -49,7 +49,7 @@ public class PropertyController {
         return new ResponseEntity<>(createdProperty, HttpStatus.CREATED);
     }
 
-    @Operation(summary = "Update an Existing Property (Owner Only)")
+    @Operation(summary = "Update an Existing Property (seller Only)")
     @PutMapping("/{propertyId}")
     @PreAuthorize("hasRole('SELLER')")
     public ResponseEntity<PropertyResponseDto> updateProperty(
@@ -72,7 +72,7 @@ public class PropertyController {
         PropertyResponseDto updatedProperty = propertyService.updateProperty(propertyId, updateDto, imageFile, authentication);
         return ResponseEntity.ok(updatedProperty);
     }
-    
+
     @Operation(summary = "Get All Active Properties (Public)")
     @GetMapping
     public ResponseEntity<List<PropertyResponseDto>> getAllActiveProperties() {

@@ -23,6 +23,7 @@ import com.urbanproperty.dao.AmenityDao;
 import com.urbanproperty.dao.PropertyDao;
 import com.urbanproperty.dao.PropertyTypeDao;
 import com.urbanproperty.dao.UserDao;
+import com.urbanproperty.dto.PendingPropertyResponseDto;
 import com.urbanproperty.dto.PropertyDetailsDto;
 import com.urbanproperty.dto.PropertyRequestDto;
 import com.urbanproperty.dto.PropertyResponseDto;
@@ -256,5 +257,47 @@ public class PropertyServiceImpl implements PropertyService {
         });
 
         return monthlyStatsMap;
+    }
+    
+    public List<PendingPropertyResponseDto> getAllPendingProperties() {
+        List<Property> pendingProperties = propertyDao.findByStatus(PropertyStatus.PENDING);
+        
+        return pendingProperties.stream()
+                .map(this::mapToPendingDto)
+                .collect(Collectors.toList());
+    }
+    
+    private PendingPropertyResponseDto mapToPendingDto(Property property) {
+        PendingPropertyResponseDto dto = new PendingPropertyResponseDto();
+        
+        dto.setId(property.getId());
+        dto.setTitle(property.getTitle());
+        dto.setAddress(property.getAddress());
+        dto.setStartingPrice(property.getStartingPrice());
+        dto.setCreatedTime(property.getCreatedTime());
+        
+        if (property.getSeller() != null) {
+            dto.setSellerName(property.getSeller().getFirstName() + " " + property.getSeller().getLastName());
+        }
+        if (property.getPropertyType() != null) {
+            dto.setPropertyTypeName(property.getPropertyType().getName());
+        }
+        
+        return dto;
+    }
+    
+    @Override
+    public List<PendingPropertyResponseDto> approveProperty(Long propertyId) {
+        Property property = propertyDao.findById(propertyId)
+                .orElseThrow(() -> new ResourceNotFoundException("Property not found with id: " + propertyId));
+
+        if (property.getStatus() != PropertyStatus.PENDING) {
+            throw new ApiException("Property is not in a PENDING state and cannot be approved.");
+        }
+
+        property.setStatus(PropertyStatus.ACTIVE);
+        propertyDao.save(property); // The change is saved to the database.
+
+        return getAllPendingProperties();
     }
 }

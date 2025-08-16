@@ -46,7 +46,7 @@ public class JwtUtils {
 		key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
 	}
 	
-	// Generates a JWT token upon successful authentication
+	    // Generates a JWT token upon successful authentication
 		public String generateJwtToken(Authentication authentication) {
 			log.info("Generating JWT token for: {}", authentication.getName());
 			UserEntity userPrincipal = (UserEntity) authentication.getPrincipal();
