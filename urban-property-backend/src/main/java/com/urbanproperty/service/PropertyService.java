@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.urbanproperty.dto.PendingPropertyResponseDto;
 import com.urbanproperty.dto.PropertyRequestDto;
 import com.urbanproperty.dto.PropertyResponseDto;
 import com.urbanproperty.dto.PropertyUpdateDto;
@@ -24,4 +25,8 @@ public interface PropertyService {
     
     Map<PropertyStatus, Long> getPropertyStatusCounts();
     Map<String, Long> getMonthlyPropertyStatsForCurrentYear();
+    
+    List<PendingPropertyResponseDto> getAllPendingProperties();
+    List<PendingPropertyResponseDto> approveProperty(Long propertyId);
+
 }
