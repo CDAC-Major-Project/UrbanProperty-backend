@@ -15,12 +15,12 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PropertyTypeDto {
+public class PropertyTypeWithCountDto {
 	@JsonProperty(access =Access.READ_ONLY)
 	private Long id ;
 	@NotBlank
 	private String name;
 	private String description;
 	private LocalDateTime createdTime;
-	private long propertyCount;
+	private long count; // The new field
 }

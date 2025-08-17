@@ -1,8 +1,8 @@
 package com.urbanproperty.service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,6 +10,7 @@ import com.urbanproperty.custom_exceptions.ApiException;
 import com.urbanproperty.custom_exceptions.ResourceNotFoundException;
 import com.urbanproperty.dao.PropertyTypeDao;
 import com.urbanproperty.dto.PropertyTypeDto;
+import com.urbanproperty.dto.PropertyTypeWithCountDto;
 import com.urbanproperty.entities.PropertyType;
 
 import lombok.AllArgsConstructor;
@@ -26,34 +27,33 @@ public class PropertyTypeServiceImpl implements PropertyTypeService {
 
 	
     private final PropertyTypeDao propertyTypeDao;
+    private final ModelMapper mapper;
 
     @Override
-    public PropertyTypeDto createPropertyType(PropertyTypeDto dto) {
+    public List<PropertyTypeWithCountDto> createPropertyType(PropertyTypeDto dto) {
     	// 1. validating property type
         if (propertyTypeDao.existsByName(dto.getName())) {
             throw new ApiException("Property Type with name '" + dto.getName() + "' already exists.");
         }
         PropertyType propertyType = mapToEntity(dto);
         PropertyType savedEntity = propertyTypeDao.save(propertyType);
-        return mapToDto(savedEntity);
+        return getAllPropertyTypes();
     }
 
     @Override
     public PropertyTypeDto getPropertyTypeById(Long id) {
         PropertyType propertyType = propertyTypeDao.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("PropertyType not found with id: " + id));
-        return mapToDto(propertyType);
+        return mapper.map(propertyType, PropertyTypeDto.class);
     }
 
     @Override
-    public List<PropertyTypeDto> getAllPropertyTypes() {
-        return propertyTypeDao.findAll().stream()
-                .map(entity -> this.mapToDto(entity))
-                .collect(Collectors.toList());
+    public List<PropertyTypeWithCountDto> getAllPropertyTypes() {
+    	return propertyTypeDao.findAllWithPropertyCount();
     }
     
     @Override
-    public PropertyTypeDto updatePropertyType(Long id, PropertyTypeDto dto) {
+    public List<PropertyTypeWithCountDto> updatePropertyType(Long id, PropertyTypeDto dto) {
         PropertyType existingEntity = propertyTypeDao.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("PropertyType not found with id: " + id));
 
@@ -70,15 +70,16 @@ public class PropertyTypeServiceImpl implements PropertyTypeService {
         existingEntity.setDescription(dto.getDescription());
 
         PropertyType updatedEntity = propertyTypeDao.save(existingEntity);
-        return mapToDto(updatedEntity);
+        return getAllPropertyTypes();
     }
 
     @Override
-    public void deletePropertyType(Long id) {
+    public List<PropertyTypeWithCountDto> deletePropertyType(Long id) {
         if (!propertyTypeDao.existsById(id)) {
             throw new ResourceNotFoundException("PropertyType not found with id: " + id);
         }
         propertyTypeDao.deleteById(id);
+        return getAllPropertyTypes();
     }
 
     private PropertyType mapToEntity(PropertyTypeDto dto) {
@@ -86,14 +87,6 @@ public class PropertyTypeServiceImpl implements PropertyTypeService {
         entity.setName(dto.getName());
         entity.setDescription(dto.getDescription());
         return entity;
-    }
-
-    private PropertyTypeDto mapToDto(PropertyType entity) {
-        return new PropertyTypeDto(
-            entity.getId(),
-            entity.getName(),
-            entity.getDescription()
-        );
     }
 	
 }

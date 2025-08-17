@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.urbanproperty.dto.PropertyTypeDto;
+import com.urbanproperty.dto.PropertyTypeWithCountDto;
 import com.urbanproperty.service.PropertyTypeService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,8 +36,8 @@ public class PropertyTypeController {
     	    description = "Adds a new property type to the system (e.g., 'Residential', 'Commercial'). Requires ADMIN privileges."
     	)
     public ResponseEntity<?> createPropertyType(@Valid @RequestBody PropertyTypeDto dto) {
-        PropertyTypeDto createdPropertyType = propertyTypeService.createPropertyType(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdPropertyType);
+    	List<PropertyTypeWithCountDto> propertyTypes = propertyTypeService.createPropertyType(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(propertyTypes);
     }
 
     @GetMapping
@@ -45,7 +46,7 @@ public class PropertyTypeController {
     	    description = "Retrieves a list of all available property types. This is a public endpoint."
     	)
     public ResponseEntity<?> getAllPropertyTypes() {
-        List<PropertyTypeDto> propertyTypes = propertyTypeService.getAllPropertyTypes();
+    	List<PropertyTypeWithCountDto> propertyTypes = propertyTypeService.getAllPropertyTypes();
         return ResponseEntity.status(HttpStatus.OK).body(propertyTypes);
     }
 
@@ -66,8 +67,8 @@ public class PropertyTypeController {
     	    description = "Updates the name and/or description of an existing property type. Requires ADMIN privileges."
     	)
     public ResponseEntity<?> updatePropertyType(@PathVariable Long id, @Valid @RequestBody PropertyTypeDto dto) {
-        PropertyTypeDto updatedPropertyType = propertyTypeService.updatePropertyType(id, dto);
-        return ResponseEntity.status(HttpStatus.OK).body(updatedPropertyType);
+    	List<PropertyTypeWithCountDto> propertyTypes = propertyTypeService.updatePropertyType(id, dto);
+        return ResponseEntity.status(HttpStatus.OK).body(propertyTypes);
     }
 
     @DeleteMapping("/{id}")
@@ -77,7 +78,7 @@ public class PropertyTypeController {
     	    description = "Deletes a property type from the system based on its unique ID. Requires ADMIN privileges."
     	)
     public ResponseEntity<?> deletePropertyType(@PathVariable Long id) {
-        propertyTypeService.deletePropertyType(id);
-        return ResponseEntity.status(HttpStatus.OK).body("PropertyType with id " + id + " has been successfully deleted.");
+    	List<PropertyTypeWithCountDto> propertyTypes = propertyTypeService.deletePropertyType(id);
+        return ResponseEntity.ok(propertyTypes);
     }
 }
