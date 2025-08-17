@@ -1,17 +1,19 @@
 package com.urbanproperty.service;
 
 import java.util.List;
+
 import com.urbanproperty.dto.PropertyTypeDto;
+import com.urbanproperty.dto.PropertyTypeWithCountDto;
 
 public interface PropertyTypeService {
     
-    PropertyTypeDto createPropertyType(PropertyTypeDto dto);
+	List<PropertyTypeWithCountDto> createPropertyType(PropertyTypeDto dto);
 
     PropertyTypeDto getPropertyTypeById(Long id);
 
-    List<PropertyTypeDto> getAllPropertyTypes();
+    List<PropertyTypeWithCountDto> getAllPropertyTypes();
 
-    PropertyTypeDto updatePropertyType(Long id, PropertyTypeDto dto);
+    List<PropertyTypeWithCountDto> updatePropertyType(Long id, PropertyTypeDto dto);
 
-    void deletePropertyType(Long id);
+    List<PropertyTypeWithCountDto> deletePropertyType(Long id);
 }
